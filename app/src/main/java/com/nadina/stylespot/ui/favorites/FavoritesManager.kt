@@ -1,4 +1,8 @@
 package com.nadina.stylespot.ui.favorites
 
-class FavoritesManager {
+import androidx.compose.runtime.mutableStateListOf
+
+object FavoriteManager {
+
+    val favoriteOutfits = mutableStateListOf<String>()
 }
