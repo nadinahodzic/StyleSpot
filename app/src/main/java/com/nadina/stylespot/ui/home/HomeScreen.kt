@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -41,12 +43,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.nadina.stylespot.R
 import com.nadina.stylespot.ui.favorites.FavoriteManager
 import com.nadina.stylespot.ui.profile.RepostManager
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    navController: NavHostController
+) {
 
     val greatVibes = FontFamily(
         Font(R.font.greatvibesregular)
@@ -57,129 +62,188 @@ fun HomeScreen() {
     }
 
     val categories = listOf(
-        "Casual",
-        "Elegant",
-        "Streetwear",
-        "Sport",
-        "Vintage"
+        "old money",
+        "streetwear",
+        "soft glam",
+        "espresso girl"
     )
 
     val filteredOutfits = listOf(
-        Pair("Old Money", R.drawable.oldmoney),
-        Pair("Minimal", R.drawable.minimal),
-        Pair("Streetwear", R.drawable.streetwear),
-        Pair("Elegant", R.drawable.elegant)
+        Pair("soft glam", R.drawable.elegant),
+        Pair("old money", R.drawable.oldmoney),
+        Pair("streetwear", R.drawable.streetwear),
+        Pair("espresso girl", R.drawable.espressogirl1)
     ).filter {
 
-        it.first.contains(searchText, ignoreCase = true)
+        it.first.contains(
+            searchText,
+            ignoreCase = true
+        )
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAF9F6))
-            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+            .background(Color(0xFFFFFCF8))
+            .padding(20.dp)
     ) {
 
+        Spacer(modifier = Modifier.height(12.dp))
+
         Text(
-            text = "Hello, Nadina",
-            fontSize = 42.sp,
+            text = "welcome back,",
+            fontSize = 18.sp,
+            color = Color.Gray
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = "Nadina",
+            fontSize = 52.sp,
             fontFamily = greatVibes,
-            color = Color.Black
+            color = Color(0xFF8B5E3C)
+        )
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        Card(
+            shape = RoundedCornerShape(24.dp),
+
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFF7F1EA)
+            ),
+
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 0.dp
+            )
+        ) {
+
+            OutlinedTextField(
+                value = searchText,
+
+                onValueChange = {
+                    searchText = it
+                },
+
+                modifier = Modifier.fillMaxWidth(),
+
+                placeholder = {
+
+                    Text(
+                        text = "search aesthetics",
+                        color = Color.Gray
+                    )
+                },
+
+                singleLine = true,
+
+                shape = RoundedCornerShape(24.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "discover styles",
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF7A5C43),
+            letterSpacing = 1.sp
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = searchText,
-
-            onValueChange = {
-                searchText = it
-            },
-
-            modifier = Modifier.fillMaxWidth(),
-
-            placeholder = {
-                Text("Search outfits...")
-            }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Categories",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp)
+            contentPadding = PaddingValues(horizontal = 2.dp)
         ) {
 
             items(categories) { category ->
 
                 Card(
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.clickable {
+
+                        navController.navigate(
+                            "style_details/$category"
+                        )
+                    },
+
+                    shape = RoundedCornerShape(18.dp),
+
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFD8C3A5)
+                        containerColor = Color(0xFFF1E6DA)
                     )
                 ) {
 
                     Text(
                         text = category,
+
                         modifier = Modifier.padding(
-                            horizontal = 20.dp,
+                            horizontal = 22.dp,
                             vertical = 12.dp
                         ),
-                        color = Color.Black
+
+                        color = Color(0xFF8B5E3C),
+                        fontSize = 15.sp
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(36.dp))
 
         Text(
-            text = "Trending Outfits ✨",
+            text = "trending looks",
             fontSize = 22.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF7A5C43),
+            letterSpacing = 1.sp
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         if (filteredOutfits.isEmpty()) {
 
             Text(
-                text = "No outfits found ✨",
+                text = "no looks found",
                 color = Color.Gray,
-                fontSize = 18.sp
+                fontSize = 16.sp
             )
 
         } else {
 
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(18.dp)
             ) {
 
                 items(filteredOutfits) { outfit ->
 
                     OutfitCard(
                         title = outfit.first,
-                        image = outfit.second
+                        image = outfit.second,
+
+                        onClick = {
+
+                            navController.navigate(
+                                "style_details/${outfit.first}"
+                            )
+                        }
                     )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
 @Composable
 fun OutfitCard(
     title: String,
-    image: Int
+    image: Int,
+    onClick: () -> Unit
 ) {
 
     var isFavorite by remember {
@@ -196,14 +260,20 @@ fun OutfitCard(
 
     Card(
         modifier = Modifier
-            .width(170.dp)
-            .height(260.dp),
-        shape = RoundedCornerShape(20.dp),
+            .width(210.dp)
+            .height(320.dp)
+            .clickable {
+                onClick()
+            },
+
+        shape = RoundedCornerShape(28.dp),
+
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
+
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 3.dp
         )
     ) {
 
@@ -215,11 +285,11 @@ fun OutfitCard(
 
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
+                    .height(240.dp)
                     .clip(
                         RoundedCornerShape(
-                            topStart = 20.dp,
-                            topEnd = 20.dp
+                            topStart = 28.dp,
+                            topEnd = 28.dp
                         )
                     ),
 
@@ -227,16 +297,17 @@ fun OutfitCard(
             )
 
             Column(
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(16.dp)
             ) {
 
                 Text(
                     text = title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp,
+                    color = Color.Black
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -246,15 +317,16 @@ fun OutfitCard(
 
                     Text(
                         text = if (isReposted)
-                            "Reposted"
+                            "reposted"
                         else
-                            "Trending",
+                            "trending",
 
-                        color = Color.Gray
+                        color = Color.Gray,
+                        fontSize = 14.sp
                     )
 
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
 
                         Icon(
@@ -262,7 +334,7 @@ fun OutfitCard(
                             contentDescription = null,
 
                             tint = if (isReposted)
-                                Color(0xFFD8C3A5)
+                                Color(0xFFB08968)
                             else
                                 Color.Gray,
 
@@ -272,11 +344,15 @@ fun OutfitCard(
 
                                 if (isReposted) {
 
-                                    RepostManager.repostedOutfits.add(title)
+                                    RepostManager
+                                        .repostedOutfits
+                                        .add(title)
 
                                 } else {
 
-                                    RepostManager.repostedOutfits.remove(title)
+                                    RepostManager
+                                        .repostedOutfits
+                                        .remove(title)
                                 }
                             }
                         )
@@ -290,7 +366,7 @@ fun OutfitCard(
                             contentDescription = null,
 
                             tint = if (isFavorite)
-                                Color.Red
+                                Color(0xFFB08968)
                             else
                                 Color.Gray,
 
@@ -300,11 +376,15 @@ fun OutfitCard(
 
                                 if (isFavorite) {
 
-                                    FavoriteManager.favoriteOutfits.add(title)
+                                    FavoriteManager
+                                        .favoriteOutfits
+                                        .add(title)
 
                                 } else {
 
-                                    FavoriteManager.favoriteOutfits.remove(title)
+                                    FavoriteManager
+                                        .favoriteOutfits
+                                        .remove(title)
                                 }
                             }
                         )

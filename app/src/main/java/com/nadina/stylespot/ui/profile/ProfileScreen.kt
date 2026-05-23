@@ -1,5 +1,6 @@
 package com.nadina.stylespot.ui.profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,24 +20,30 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.nadina.stylespot.R
 
 @Composable
@@ -48,108 +55,242 @@ fun ProfileScreen(
         Font(R.font.greatvibesregular)
     )
 
+    val currentUser = FirebaseAuth
+        .getInstance()
+        .currentUser
+
+    val selectedAesthetics = remember {
+        mutableStateListOf<String>()
+    }
+
+    val aesthetics = listOf(
+        "old money",
+        "soft glam",
+        "minimal",
+        "streetwear",
+
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(Color(0xFFFAF9F6))
-            .padding(16.dp),
+            .background(Color(0xFFFFFCF8))
+            .padding(20.dp),
 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Card(
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.size(140.dp),
+
             shape = CircleShape,
+
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFD8C3A5)
+                containerColor = Color(0xFFF1E6DA)
+            ),
+
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 3.dp
             )
         ) {
 
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Image(
+                painter = painterResource(id = R.drawable.profilegirl),
+                contentDescription = null,
 
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(60.dp),
-                    tint = Color.White
-                )
-            }
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+
+                contentScale = ContentScale.Crop
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "Nadina",
-            fontSize = 42.sp,
+            fontSize = 46.sp,
             fontFamily = greatVibes,
-            color = Color.Black
+            color = Color(0xFF8B5E3C)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Fashion Enthusiast ✨",
-            fontSize = 18.sp,
-            color = Color.Gray
+            text = "fashion enthusiast",
+            fontSize = 17.sp,
+            color = Color.Gray,
+            letterSpacing = 0.5.sp
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(34.dp))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
             StatCard(
-                title = "Favorites",
-                value = "24",
+                title = "saved looks",
+                value = "48",
+                icon = Icons.Default.Style
+            )
+
+            StatCard(
+                title = "favorites",
+                value = "23",
                 icon = Icons.Default.Favorite
             )
 
             StatCard(
-                title = "Styles",
-                value = "12",
+                title = "planned",
+                value = "16",
                 icon = Icons.Default.Style
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(34.dp))
 
-        ProfileOption(
-            title = "Edit Profile",
-            onClick = {
-                navController.navigate("edit_profile")
-            }
+        Text(
+            text = "style preferences",
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF7A5C43)
         )
 
+        Spacer(modifier = Modifier.height(14.dp))
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+
+            items(aesthetics) { aesthetic ->
+
+                val isSelected =
+                    selectedAesthetics.contains(aesthetic)
+
+                Card(
+                    modifier = Modifier.clickable {
+
+                        if (isSelected) {
+
+                            selectedAesthetics.remove(aesthetic)
+
+                        } else {
+
+                            selectedAesthetics.add(aesthetic)
+                        }
+                    },
+
+                    shape = RoundedCornerShape(18.dp),
+
+                    colors = CardDefaults.cardColors(
+
+                        containerColor = if (isSelected)
+                            Color(0xFFB08968)
+                        else
+                            Color(0xFFF1E6DA)
+                    )
+                ) {
+
+                    Text(
+                        text = aesthetic,
+
+                        modifier = Modifier.padding(
+                            horizontal = 18.dp,
+                            vertical = 10.dp
+                        ),
+
+                        color = if (isSelected)
+                            Color.White
+                        else
+                            Color(0xFF8B5E3C),
+
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(34.dp))
+
         ProfileOption(
-            title = "Saved Looks",
+            title = "my wardrobe",
             onClick = {
                 navController.navigate("saved_looks")
             }
-
         )
 
         ProfileOption(
-            title = "App Settings"
+            title = "style preferences"
         )
 
         ProfileOption(
-            title = "About StyleSpot"
+            title = "reminders"
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        ProfileOption(
+            title = "settings"
+        )
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .clickable {
+
+                    FirebaseAuth
+                        .getInstance()
+                        .signOut()
+
+                    navController.navigate("login")
+                },
+
+            shape = RoundedCornerShape(22.dp),
+
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFB08968)
+            )
+        ) {
+
+            Row(
+                modifier = Modifier.padding(20.dp),
+
+                verticalAlignment = Alignment.CenterVertically,
+
+                horizontalArrangement = Arrangement.Center
+            ) {
+
+                Icon(
+                    imageVector = Icons.Default.ExitToApp,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Text(
+                    text = "sign out",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    letterSpacing = 1.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(36.dp))
 
         Text(
-            text = "My Reposts (${RepostManager.repostedOutfits.size})",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold
+            text = "my reposts",
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF7A5C43)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -157,28 +298,31 @@ fun ProfileScreen(
         if (RepostManager.repostedOutfits.isEmpty()) {
 
             Text(
-                text = "No reposts yet",
+                text = "no reposts yet",
                 color = Color.Gray
             )
 
         } else {
 
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
 
                 items(RepostManager.repostedOutfits) { repost ->
 
                     Card(
                         modifier = Modifier
-                            .width(160.dp)
-                            .height(200.dp),
-                        shape = RoundedCornerShape(20.dp),
+                            .width(170.dp)
+                            .height(210.dp),
+
+                        shape = RoundedCornerShape(26.dp),
+
                         colors = CardDefaults.cardColors(
                             containerColor = Color.White
                         ),
+
                         elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
+                            defaultElevation = 3.dp
                         )
                     ) {
 
@@ -187,24 +331,24 @@ fun ProfileScreen(
                             Spacer(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(130.dp)
-                                    .background(Color(0xFFD8C3A5))
+                                    .height(140.dp)
+                                    .background(Color(0xFFF1E6DA))
                             )
 
                             Column(
-                                modifier = Modifier.padding(12.dp)
+                                modifier = Modifier.padding(14.dp)
                             ) {
 
                                 Text(
                                     text = repost,
-                                    fontWeight = FontWeight.Bold,
+                                    fontWeight = FontWeight.SemiBold,
                                     fontSize = 18.sp
                                 )
 
-                                Spacer(modifier = Modifier.height(6.dp))
+                                Spacer(modifier = Modifier.height(4.dp))
 
                                 Text(
-                                    text = "Reposted ✨",
+                                    text = "reposted",
                                     color = Color.Gray
                                 )
                             }
@@ -214,7 +358,7 @@ fun ProfileScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(50.dp))
     }
 }
 
@@ -227,14 +371,17 @@ fun StatCard(
 
     Card(
         modifier = Modifier
-            .height(120.dp)
-            .fillMaxWidth(0.45f),
-        shape = RoundedCornerShape(20.dp),
+            .height(110.dp)
+            .width(110.dp),
+
+        shape = RoundedCornerShape(24.dp),
+
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = Color(0xFFF7F1EA)
         ),
+
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 0.dp
         )
     ) {
 
@@ -242,26 +389,28 @@ fun StatCard(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
+
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color(0xFFD8C3A5)
+                tint = Color(0xFFB08968)
             )
 
             Column {
 
                 Text(
                     text = value,
-                    fontSize = 24.sp,
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
                     text = title,
-                    color = Color.Gray
+                    color = Color.Gray,
+                    fontSize = 13.sp
                 )
             }
         }
@@ -277,23 +426,30 @@ fun ProfileOption(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 12.dp)
+            .padding(bottom = 14.dp)
             .clickable {
                 onClick()
             },
-        shape = RoundedCornerShape(18.dp),
+
+        shape = RoundedCornerShape(22.dp),
+
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
+
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
+            defaultElevation = 2.dp
         )
     ) {
 
         Text(
             text = title,
-            modifier = Modifier.padding(20.dp),
-            fontSize = 18.sp
+
+            modifier = Modifier.padding(22.dp),
+
+            fontSize = 17.sp,
+
+            color = Color.Black
         )
     }
 }
