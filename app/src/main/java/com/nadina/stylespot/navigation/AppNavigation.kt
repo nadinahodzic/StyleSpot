@@ -53,7 +53,8 @@ fun AppNavigation() {
             }
 
             composable("favorites") {
-                FavoritesScreen()
+                FavoritesScreen(navController)
+
             }
 
             composable("profile") {

@@ -4,17 +4,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -23,8 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,85 +35,171 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.nadina.stylespot.R
 
 @Composable
-fun FavoritesScreen() {
+fun FavoritesScreen(
+    navController: NavHostController
+) {
 
     val greatVibes = FontFamily(
         Font(R.font.greatvibesregular)
     )
 
-    val favorites = remember {
-        mutableStateListOf<String>().apply {
-            addAll(FavoriteManager.favoriteOutfits)
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAF9F6))
-            .padding(16.dp)
+            .background (Color(0xFFFFFCF8))
+            .padding(20.dp)
     ) {
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = "Favorites",
-            fontSize = 42.sp,
+            fontSize = 44.sp,
             fontFamily = greatVibes,
-            color = Color.Black
+            color = Color(0xFF8B5E3C)
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Your Saved Looks ✨",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
+            text = "saved inspirations",
+            fontSize = 17.sp,
+            color = Color.Gray
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
-        if (favorites.isEmpty()) {
+        if (FavoriteManager.favoriteOutfits.isEmpty()) {
 
-            Text(
-                text = "No saved outfits yet",
-                color = Color.Gray,
-                fontSize = 18.sp
-            )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(430.dp),
+
+                shape = RoundedCornerShape(32.dp),
+
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFF7F1EA)
+                ),
+
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 0.dp
+                )
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+
+                    verticalArrangement = Arrangement.Center,
+
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Box(
+                        modifier = Modifier
+                            .size(90.dp)
+                            .clip(RoundedCornerShape(28.dp))
+                            .background(Color(0xFFEADBCB)),
+
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = null,
+                            tint = Color(0xFFB08968),
+                            modifier = Modifier.size(42.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "your wardrobe is empty",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF7A5C43)
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "discover aesthetics and save your favorite looks",
+                        color = Color.Gray,
+                        fontSize = 16.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(28.dp))
+
+                    Card(
+                        modifier = Modifier.clickable {
+
+                            navController.navigate("home")
+                        },
+
+                        shape = RoundedCornerShape(22.dp),
+
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFB08968)
+                        )
+                    ) {
+
+                        Text(
+                            text = "explore styles",
+
+                            modifier = Modifier.padding(
+                                horizontal = 28.dp,
+                                vertical = 16.dp
+                            ),
+
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
 
         } else {
 
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(horizontal = 4.dp)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+
+                contentPadding = PaddingValues(bottom = 30.dp)
             ) {
 
-                items(favorites) { outfit ->
+                items(FavoriteManager.favoriteOutfits) { favorite ->
 
-                    val image = when (outfit) {
+                    val image = when (favorite) {
 
-                        "Old Money" -> R.drawable.oldmoney
-                        "Minimal" -> R.drawable.minimal
-                        "Streetwear" -> R.drawable.streetwear
-                        "Elegant" -> R.drawable.elegant
+                        "soft glam" -> R.drawable.softglam1
 
-                        else -> R.drawable.oldmoney
+                        "old money" -> R.drawable.oldmoney1
+
+                        "streetwear" -> R.drawable.streetwear1
+
+                        else -> R.drawable.espressogirl1
                     }
 
                     Card(
-                        modifier = Modifier
-                            .width(180.dp)
-                            .height(260.dp),
-
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(28.dp),
 
                         colors = CardDefaults.cardColors(
                             containerColor = Color.White
                         ),
 
                         elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
+                            defaultElevation = 3.dp
                         )
                     ) {
 
@@ -125,13 +211,7 @@ fun FavoritesScreen() {
 
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(180.dp)
-                                    .clip(
-                                        RoundedCornerShape(
-                                            topStart = 24.dp,
-                                            topEnd = 24.dp
-                                        )
-                                    ),
+                                    .height(240.dp),
 
                                 contentScale = ContentScale.Crop
                             )
@@ -140,35 +220,16 @@ fun FavoritesScreen() {
                                 modifier = Modifier.padding(14.dp)
                             ) {
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
+                                Text(
+                                    text = favorite,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
 
-                                    Text(
-                                        text = outfit,
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-
-                                    Icon(
-                                        imageVector = Icons.Default.Favorite,
-                                        contentDescription = null,
-
-                                        tint = Color.Red,
-
-                                        modifier = Modifier.clickable {
-
-                                            favorites.remove(outfit)
-                                            FavoriteManager.favoriteOutfits.remove(outfit)
-                                        }
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(4.dp))
 
                                 Text(
-                                    text = "Fashion Favorite ✨",
+                                    text = "saved look",
                                     color = Color.Gray
                                 )
                             }

@@ -84,7 +84,7 @@ fun PlannerScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAF9F6))
+            .background(Color(0xFFF3ECE4))
             .padding(16.dp)
     ) {
 

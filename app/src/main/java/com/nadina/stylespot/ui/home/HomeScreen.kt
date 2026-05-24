@@ -69,7 +69,7 @@ fun HomeScreen(
     )
 
     val filteredOutfits = listOf(
-        Pair("soft glam", R.drawable.elegant),
+        Pair("soft glam", R.drawable.softglam),
         Pair("old money", R.drawable.oldmoney),
         Pair("streetwear", R.drawable.streetwear),
         Pair("espresso girl", R.drawable.espressogirl1)
@@ -112,7 +112,7 @@ fun HomeScreen(
             shape = RoundedCornerShape(24.dp),
 
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFF7F1EA)
+                containerColor = Color(0xFFEFE3D6)
             ),
 
             elevation = CardDefaults.cardElevation(
@@ -173,7 +173,7 @@ fun HomeScreen(
                     shape = RoundedCornerShape(18.dp),
 
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFF1E6DA)
+                        containerColor = Color(0xFFE8D8C8)
                     )
                 ) {
 

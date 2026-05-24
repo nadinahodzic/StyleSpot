@@ -70,7 +70,6 @@ fun BuilderScreen() {
     }
 
     val tops = listOf(
-        R.drawable.croptop2,
         R.drawable.croptop3,
         R.drawable.croptop4,
         R.drawable.croptop5,
@@ -136,7 +135,6 @@ fun BuilderScreen() {
 
     val jewelry = listOf(
         R.drawable.jewelry,
-        R.drawable.jewelry2,
         R.drawable.jewelry3,
         R.drawable.jewelry4,
         R.drawable.jewelry5,
@@ -160,7 +158,7 @@ fun BuilderScreen() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(Color(0xFFFFFCF8))
+            .background (Color(0xFFFFFCF8))
             .padding(20.dp)
     ) {
 

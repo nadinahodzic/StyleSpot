@@ -28,8 +28,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.nadina.stylespot.R
+import com.nadina.stylespot.ui.favorites.FavoriteManager
 
 @Composable
 fun ProfileScreen(
@@ -55,21 +54,11 @@ fun ProfileScreen(
         Font(R.font.greatvibesregular)
     )
 
-    val currentUser = FirebaseAuth
-        .getInstance()
-        .currentUser
+    val username = ProfileDataManager.username
 
-    val selectedAesthetics = remember {
-        mutableStateListOf<String>()
-    }
+    val bio = ProfileDataManager.bio
 
-    val aesthetics = listOf(
-        "old money",
-        "soft glam",
-        "minimal",
-        "streetwear",
-
-    )
+    val aesthetic = ProfileDataManager.aesthetic
 
     Column(
         modifier = Modifier
@@ -98,7 +87,10 @@ fun ProfileScreen(
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.profilegirl),
+                painter = painterResource(
+                    id = R.drawable.profilegirl
+                ),
+
                 contentDescription = null,
 
                 modifier = Modifier
@@ -112,7 +104,7 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Nadina",
+            text = username.value,
             fontSize = 46.sp,
             fontFamily = greatVibes,
             color = Color(0xFF8B5E3C)
@@ -121,7 +113,7 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "fashion enthusiast",
+            text = bio.value,
             fontSize = 17.sp,
             color = Color.Gray,
             letterSpacing = 0.5.sp
@@ -134,20 +126,28 @@ fun ProfileScreen(
         ) {
 
             StatCard(
-                title = "saved looks",
-                value = "48",
-                icon = Icons.Default.Style
-            )
-
-            StatCard(
                 title = "favorites",
-                value = "23",
+                value = FavoriteManager
+                    .favoriteOutfits
+                    .size
+                    .toString(),
+
                 icon = Icons.Default.Favorite
             )
 
             StatCard(
-                title = "planned",
-                value = "16",
+                title = "reposts",
+                value = RepostManager
+                    .repostedOutfits
+                    .size
+                    .toString(),
+
+                icon = Icons.Default.Style
+            )
+
+            StatCard(
+                title = "style",
+                value = "1",
                 icon = Icons.Default.Style
             )
         }
@@ -155,7 +155,7 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(34.dp))
 
         Text(
-            text = "style preferences",
+            text = "favorite aesthetic",
             modifier = Modifier.fillMaxWidth(),
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
@@ -164,59 +164,35 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        Card(
+            shape = RoundedCornerShape(18.dp),
+
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFB08968)
+            )
         ) {
 
-            items(aesthetics) { aesthetic ->
+            Text(
+                text = aesthetic.value,
 
-                val isSelected =
-                    selectedAesthetics.contains(aesthetic)
+                modifier = Modifier.padding(
+                    horizontal = 20.dp,
+                    vertical = 12.dp
+                ),
 
-                Card(
-                    modifier = Modifier.clickable {
-
-                        if (isSelected) {
-
-                            selectedAesthetics.remove(aesthetic)
-
-                        } else {
-
-                            selectedAesthetics.add(aesthetic)
-                        }
-                    },
-
-                    shape = RoundedCornerShape(18.dp),
-
-                    colors = CardDefaults.cardColors(
-
-                        containerColor = if (isSelected)
-                            Color(0xFFB08968)
-                        else
-                            Color(0xFFF1E6DA)
-                    )
-                ) {
-
-                    Text(
-                        text = aesthetic,
-
-                        modifier = Modifier.padding(
-                            horizontal = 18.dp,
-                            vertical = 10.dp
-                        ),
-
-                        color = if (isSelected)
-                            Color.White
-                        else
-                            Color(0xFF8B5E3C),
-
-                        fontSize = 14.sp
-                    )
-                }
-            }
+                color = Color.White,
+                fontSize = 15.sp
+            )
         }
 
         Spacer(modifier = Modifier.height(34.dp))
+
+        ProfileOption(
+            title = "edit profile",
+            onClick = {
+                navController.navigate("edit_profile")
+            }
+        )
 
         ProfileOption(
             title = "my wardrobe",
@@ -227,10 +203,6 @@ fun ProfileScreen(
 
         ProfileOption(
             title = "style preferences"
-        )
-
-        ProfileOption(
-            title = "reminders"
         )
 
         ProfileOption(
